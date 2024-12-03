@@ -113,21 +113,21 @@ public class Main {
             System.out.println("Q - Quit");
 
 
-            cmd = SafeInput.getRegExString(in, "Please enter a command", "[AaDdIiVvMmOoSsCcQq]");
+            cmd = SafeInput.getRegExString(in, "Please enter a command ", "[AaDdIiVvMmOoSsCcQq]");
 
             switch (cmd.toUpperCase()) {
                 case "A":
-                    String newItem = SafeInput.getRegExString(in, "Enter the item to add", ".*");
+                    String newItem = SafeInput.getRegExString(in, "Enter the item to add ", ".*");
                     Main.addItem(newItem);
                     break;
                 case "D":
-                    int deleteIndex = SafeInput.getRangedInt(in, "Enter the number of the item to delete", 1, Main.getListSize()) - 1;
+                    int deleteIndex = SafeInput.getRangedInt(in, "Enter the number of the item to delete ", 1, Main.getListSize()) - 1;
                     Main.deleteItem(deleteIndex);
                     in.nextLine();
                     break;
                 case "I":
-                    String insertItem = SafeInput.getRegExString(in, "Enter the item to insert", ".*");
-                    int insertIndex = SafeInput.getRangedInt(in, "Enter the position to insert the item", 1, Main.getListSize()) - 1;
+                    String insertItem = SafeInput.getRegExString(in, "Enter the item to insert ", ".*");
+                    int insertIndex = SafeInput.getRangedInt(in, "Enter the position to insert the item ", 1, Main.getListSize()) - 1;
                     Main.insertItem(insertIndex, insertItem);
                     in.nextLine();
                     break;
@@ -135,7 +135,7 @@ public class Main {
                     Main.viewList();
                     break;
                 case "Q":
-                    if (SafeInput.getYNConfirm(in, "Are you sure you want to quit (Y/N)")) {
+                    if (SafeInput.getYNConfirm(in, "Are you sure you want to quit (y or n)")) {
                         if (SafeInput.getYNConfirm(in, "Save current list? (y or n)")) {
                             saveList(cFile.isEmpty() ? SafeInput.getRegExString(in, "What would you like to save this list as?", ".*") : cFile);
                         }
@@ -144,29 +144,29 @@ public class Main {
                     }
                     break;
                 case "M":
-                    int fromIndex = SafeInput.getRangedInt(in, "Enter the number of the item to move", 1, getListSize()) - 1;
-                    int toIndex = SafeInput.getRangedInt(in, "Enter the position to move the item to", 1, getListSize()) - 1;
+                    int fromIndex = SafeInput.getRangedInt(in, "Enter the number of the item to move ", 1, getListSize()) - 1;
+                    int toIndex = SafeInput.getRangedInt(in, "Enter the position to move the item to ", 1, getListSize()) - 1;
                     moveItem(fromIndex, toIndex);
                     break;
                 case "O":
-                    if (save) {
+                    if (!save) {
                         if (SafeInput.getYNConfirm(in, "Save current list? (y or n)")) {
-                            saveList(cFile.isEmpty() ? SafeInput.getRegExString(in, "What would you like to save this list as?", ".*") : cFile);
+                            saveList(cFile.isEmpty() ? SafeInput.getRegExString(in, "What would you like to save this list as? ", ".*") : cFile);
                         }
                     }
-                    String filenameToLoad = SafeInput.getRegExString(in, "What list would you like to open?", ".*\\.txt");
+                    String filenameToLoad = SafeInput.getRegExString(in, "What list would you like to open? ", ".*\\.txt");
                     loadList(filenameToLoad);
                     break;
                 case "S":
                     if (!cFile.isEmpty()) {
                         saveList(cFile);
                     } else {
-                        String saveFilename = SafeInput.getRegExString(in, "What do you want to save this list as?", ".*\\.txt");
+                        String saveFilename = SafeInput.getRegExString(in, "What do you want to save this list as? ", ".*\\.txt");
                         saveList(saveFilename);
                     }
                     break;
                 case "C":
-                    if (SafeInput.getYNConfirm(in, "Are you sure you want to clear the list (Y/N)")) {
+                    if (SafeInput.getYNConfirm(in, "Are you sure you want to clear the list (y or n) ")) {
                         clearList();
                     }
                     break;
