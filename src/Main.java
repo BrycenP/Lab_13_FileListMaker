@@ -113,7 +113,7 @@ public class Main {
             System.out.println("Q - Quit");
 
 
-            cmd = SafeInput.getRegExString(in, "Please enter a command", "[AaDdIiPpQq]");
+            cmd = SafeInput.getRegExString(in, "Please enter a command", "[AaDdIiVvMmOoSsCcQq]");
 
             switch (cmd.toUpperCase()) {
                 case "A":
