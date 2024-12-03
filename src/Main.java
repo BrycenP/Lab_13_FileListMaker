@@ -123,6 +123,7 @@ public class Main {
                 case "D":
                     int deleteIndex = SafeInput.getRangedInt(in, "Enter the number of the item to delete", 1, Main.getListSize()) - 1;
                     Main.deleteItem(deleteIndex);
+                    in.nextLine();
                     break;
                 case "I":
                     String insertItem = SafeInput.getRegExString(in, "Enter the item to insert", ".*");
@@ -135,6 +136,9 @@ public class Main {
                     break;
                 case "Q":
                     if (SafeInput.getYNConfirm(in, "Are you sure you want to quit (Y/N)")) {
+                        if (SafeInput.getYNConfirm(in, "Save current list? (y or n)")) {
+                            saveList(cFile.isEmpty() ? SafeInput.getRegExString(in, "What would you like to save this list as?", ".*") : cFile);
+                        }
                         running = false;
                         System.out.println("GET OUT!!");
                     }
