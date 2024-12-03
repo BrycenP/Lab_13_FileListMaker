@@ -1,10 +1,6 @@
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
-
 public class Main {
     Scanner in = new Scanner(System.in);
     private static final ArrayList<String> list = new ArrayList<>();
@@ -92,8 +88,6 @@ public class Main {
             System.out.println("Error saving file.");
         }
     }
-
-
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         String cmd;
@@ -111,10 +105,7 @@ public class Main {
             System.out.println("S – Save the current list file to disk");
             System.out.println("C – Clear removes all the elements from the current list");
             System.out.println("Q - Quit");
-
-
             cmd = SafeInput.getRegExString(in, "Please enter a command ", "[AaDdIiVvMmOoSsCcQq]");
-
             switch (cmd.toUpperCase()) {
                 case "A":
                     String newItem = SafeInput.getRegExString(in, "Enter the item to add ", ".*");
