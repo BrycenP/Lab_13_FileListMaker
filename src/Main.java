@@ -1,10 +1,16 @@
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     Scanner in = new Scanner(System.in);
     private static final ArrayList<String> list = new ArrayList<>();
-    public static void printList() {
+    private static String cFile = "";
+    private static boolean save = false;
+    public static void viewList() {
         if (list.isEmpty()) {
             System.out.println("There is nothing here");
         } else {
@@ -37,6 +43,55 @@ public class Main {
             System.out.println("Item not on list");
         }
     }
+    public static void moveItem(int fromIndex, int toIndex){
+        if (fromIndex >= 0 && fromIndex < list.size() && toIndex >= 0 && toIndex <=list.size()){
+        String item = list.remove(fromIndex);
+            list.add(toIndex, item);
+            save = true;
+            System.out.println("Moved item from position " + (fromIndex + 1) + " to position " + (toIndex + 1) + ".");
+        }else{
+            System.out.println("Cannot complete that move.");
+        }
+    }
+    public static void clearList() {
+        list.clear();
+        save = true;
+        System.out.println("List cleared.");
+    }
+    public static boolean loadList(String filename) {
+        File file = new File(filename);
+        if (file.exists()) {
+            try (Scanner scanner = new Scanner(file)) {
+                list.clear(); // Clear the current list
+                while (scanner.hasNextLine()) {
+                    list.add(scanner.nextLine());
+                }
+                cFile = filename;
+                save = false;
+                System.out.println("List loaded from " + filename);
+                return true;
+            } catch (IOException e) {
+                System.out.println("Error reading file.");
+            }
+        } else {
+            System.out.println("File does not exist.");
+        }
+        return false;
+    }
+    public static void saveList(String filename) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            for (String item : list) {
+                writer.println(item);
+            }
+            cFile = filename;
+            save = false;
+            System.out.println("List saved to " + filename);
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: The file '" + filename + "' could not be found or created.");
+        } catch (IOException e) {
+            System.out.println("Error saving file.");
+        }
+    }
 
 
     public static void main(String[] args) {
@@ -45,13 +100,18 @@ public class Main {
         boolean running = true;
 
         while (running) {
-            Main.printList();
+            Main.viewList();
             System.out.println("\nMenu:");
             System.out.println("A - Add an item");
             System.out.println("D - Delete an item");
             System.out.println("I - Insert an item");
-            System.out.println("P - Print the list");
+            System.out.println("V - View the list");
+            System.out.println("M – Move an item");
+            System.out.println("O – Open a list file from disk");
+            System.out.println("S – Save the current list file to disk");
+            System.out.println("C – Clear removes all the elements from the current list");
             System.out.println("Q - Quit");
+
 
             cmd = SafeInput.getRegExString(in, "Please enter a command", "[AaDdIiPpQq]");
 
@@ -61,24 +121,53 @@ public class Main {
                     Main.addItem(newItem);
                     break;
                 case "D":
-                    int deleteIndex = SafeInput.getRangedInt(in,"Enter the number of the item to delete", 1, Main.getListSize()) - 1;
+                    int deleteIndex = SafeInput.getRangedInt(in, "Enter the number of the item to delete", 1, Main.getListSize()) - 1;
                     Main.deleteItem(deleteIndex);
                     break;
                 case "I":
-                    String insertItem = SafeInput.getRegExString(in,"Enter the item to insert", ".*");
-                    int insertIndex = SafeInput.getRangedInt(in,"Enter the position to insert the item", 1, Main.getListSize()) - 1;
+                    String insertItem = SafeInput.getRegExString(in, "Enter the item to insert", ".*");
+                    int insertIndex = SafeInput.getRangedInt(in, "Enter the position to insert the item", 1, Main.getListSize()) - 1;
                     Main.insertItem(insertIndex, insertItem);
+                    in.nextLine();
                     break;
-                case "P":
-                    Main.printList();
+                case "V":
+                    Main.viewList();
                     break;
                 case "Q":
-                    if (SafeInput.getYNConfirm(in,"Are you sure you want to quit (Y/N)")) {
+                    if (SafeInput.getYNConfirm(in, "Are you sure you want to quit (Y/N)")) {
                         running = false;
                         System.out.println("GET OUT!!");
                     }
                     break;
+                case "M":
+                    int fromIndex = SafeInput.getRangedInt(in, "Enter the number of the item to move", 1, getListSize()) - 1;
+                    int toIndex = SafeInput.getRangedInt(in, "Enter the position to move the item to", 1, getListSize()) - 1;
+                    moveItem(fromIndex, toIndex);
+                    break;
+                case "O":
+                    if (save) {
+                        if (SafeInput.getYNConfirm(in, "Save current list? (y or n)")) {
+                            saveList(cFile.isEmpty() ? SafeInput.getRegExString(in, "What would you like to save this list as?", ".*") : cFile);
+                        }
+                    }
+                    String filenameToLoad = SafeInput.getRegExString(in, "What list would you like to open?", ".*\\.txt");
+                    loadList(filenameToLoad);
+                    break;
+                case "S":
+                    if (!cFile.isEmpty()) {
+                        saveList(cFile);
+                    } else {
+                        String saveFilename = SafeInput.getRegExString(in, "What do you want to save this list as?", ".*\\.txt");
+                        saveList(saveFilename);
+                    }
+                    break;
+                case "C":
+                    if (SafeInput.getYNConfirm(in, "Are you sure you want to clear the list (Y/N)")) {
+                        clearList();
+                    }
+                    break;
             }
+
         }
         in.close();
     }
